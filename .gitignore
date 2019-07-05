@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs/littleEngine/v16
+/x64/Debug
+/DebugCmd/Debug
+/DebugCmd/x64/Debug
+/EngineCore/Debug
+/EngineCore/x64/Debug
+/WorkDir

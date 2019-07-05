@@ -1,4 +1,9 @@
 #pragma once
+#include "CommandContext.h"
+
+
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
 
 
 namespace littleEngine
@@ -36,25 +41,23 @@ namespace littleEngine
 		extern ContextManager g_ContextManager;
 
 		extern D3D_FEATURE_LEVEL g_D3DFeatureLevel;
+
 		extern bool g_bTypedUAVLoadSupport_R11G11B10_FLOAT;
 		extern bool g_bEnableHDROutput;
 
 		extern DescriptorAllocator g_DescriptorAllocator[];
-		inline D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE Type, UINT Count = 1)
-		{
-			return g_DescriptorAllocator[Type].Allocate(Count);
-		}
+		D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE Type, UINT Count = 1);
+		
 
-		extern RootSignature g_GenerateMipsRS;
-		extern ComputePSO g_GenerateMipsLinearPSO[4];
-		extern ComputePSO g_GenerateMipsGammaPSO[4];
+		//extern RootSignature g_GenerateMipsRS;
+		//extern ComputePSO g_GenerateMipsLinearPSO[4];
+		//extern ComputePSO g_GenerateMipsGammaPSO[4];
 
 		enum eResolution { k720p, k900p, k1080p, k1440p, k1800p, k2160p };
 
-		extern BoolVar s_EnableVSync;
-		extern EnumVar TargetResolution;
+		//extern BoolVar s_EnableVSync;
+		//extern EnumVar TargetResolution;
 		extern uint32_t g_DisplayWidth;
 		extern uint32_t g_DisplayHeight;
 	}
-
 }
