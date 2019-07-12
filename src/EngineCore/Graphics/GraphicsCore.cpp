@@ -5,16 +5,21 @@
 #include "DescriptorHeap.h"
 #include "GpuBuffer.h"
 #include "ColorBuffer.h"
+#include "DepthBuffer.h"
 #include "GraphicsCommon.h"
 #include "RootSignature.h"
 #include "PipelineState.h"
 #include "BufferManager.h"
 #include "SamplerManager.h"
 
+//shaders
 
-#include "CompiledShaders/BufferCopyPS.h"
-#include "CompiledShaders/ScreenQuadVS.h"
-#include "CompiledShaders/PresentSDRPS.h"
+#include "BufferCopyPS.h"
+#include "ScreenQuadVS.h"
+#include "PresentSDRPS.h"
+#include "UnlitPS.h"
+#include "UnlitVS.h"
+
 #include "TextRenderer.h"
 
 
@@ -37,6 +42,8 @@ namespace littleEngine
 	{
 		ID3D12Device* g_Device = nullptr;
 
+		enum Fliter { kBilinear, kBicubic, kSharpening, kFilterCount };
+		Fliter UpsampleFilter = Fliter::kBicubic;
 
 		CommandListManager g_CommandManager;
 		ContextManager g_ContextManager;
@@ -52,8 +59,8 @@ namespace littleEngine
 
 		uint32_t g_NativeWidth = 0;
 		uint32_t g_NativeHeight = 0;
-		uint32_t g_DisplayWidth = 1920;
-		uint32_t g_DisplayHeight = 1080;
+		uint32_t g_DisplayWidth = 1280;
+		uint32_t g_DisplayHeight = 720;
 
 
 		ColorBuffer g_DisplayPlane[SWAP_CHAIN_BUFFER_COUNT];
@@ -61,10 +68,12 @@ namespace littleEngine
 
 
 		RootSignature s_PresentRS;
+		RootSignature s_StandardRS;
 		GraphicsPSO s_BlendUIPSO;
 
 		GraphicsPSO PresentSDRPS;
 		GraphicsPSO PresentHDRPS;
+		GraphicsPSO UnlitPSO;
 		GraphicsPSO MagnifyPixelsPS;
 		GraphicsPSO SharpeningUpsamplePS;
 		GraphicsPSO BicubicHorizontalUpsamplePS;
@@ -80,12 +89,12 @@ namespace littleEngine
 			D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
 		};
 
-		void SetNativeResolution(void)
+		void SetNativeResolution()
 		{
 			uint32_t NativeWidth, NativeHeight;
 
 			//modify
-			switch (eResolution::k1080p)
+			switch (k720p)
 			{
 			default:
 			case k720p:
@@ -401,6 +410,21 @@ void littleEngine::Graphics::Initialize(void)
 
 	InitializeCommonState();
 
+	SamplerDesc DefaultSamplerDesc;
+	DefaultSamplerDesc.MaxAnisotropy = 8;
+
+	s_StandardRS.Reset(5, 2);
+	s_StandardRS.InitStaticSampler(0, DefaultSamplerDesc, D3D12_SHADER_VISIBILITY_PIXEL);
+	s_StandardRS.InitStaticSampler(1, SamplerShadowDesc, D3D12_SHADER_VISIBILITY_PIXEL);
+	s_StandardRS[0].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
+	s_StandardRS[1].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	s_StandardRS[2].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 6, D3D12_SHADER_VISIBILITY_PIXEL);
+	s_StandardRS[3].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 64, 6, D3D12_SHADER_VISIBILITY_PIXEL);
+	s_StandardRS[4].InitAsConstants(1, 2, D3D12_SHADER_VISIBILITY_VERTEX);
+	
+	s_StandardRS.Finalize(L"StandaerRS", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+
 	s_PresentRS.Reset(4, 2);
 	s_PresentRS[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 2);
 	s_PresentRS[1].InitAsConstants(0, 6, D3D12_SHADER_VISIBILITY_ALL);
@@ -427,6 +451,17 @@ void littleEngine::Graphics::Initialize(void)
 	s_BlendUIPSO.Finalize();
 
 
+	D3D12_INPUT_ELEMENT_DESC Standar_vertElem[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+
+	
+
 #define CreatePSO( ObjName, ShaderByteCode ) \
     ObjName = s_BlendUIPSO; \
     ObjName.SetBlendState( BlendDisable ); \
@@ -444,6 +479,18 @@ void littleEngine::Graphics::Initialize(void)
 
 
 	Graphics::SetNativeResolution();
+
+	UnlitPSO.SetRootSignature(s_StandardRS);
+	UnlitPSO.SetRasterizerState(RasterizerDefault);
+	UnlitPSO.SetBlendState(BlendDisable);
+	UnlitPSO.SetDepthStencilState(DepthStateReadWrite);
+	UnlitPSO.SetInputLayout(_countof(Standar_vertElem), Standar_vertElem);
+	UnlitPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	UnlitPSO.SetVertexShader(g_pUnlitVS, sizeof(g_pUnlitVS));
+	UnlitPSO.SetPixelShader(g_pUnlitPS, sizeof(g_pUnlitPS));
+	UnlitPSO.SetRenderTargetFormat(g_SceneColorBuffer.GetFormat(), g_SceneDepthBuffer.GetFormat());
+	UnlitPSO.Finalize();
+
 	TextRenderer::Initialize();
 
 	/*
@@ -560,8 +607,8 @@ void littleEngine::Graphics::PreparePresentLDR(void)
 		Context.SetViewportAndScissor(0, 0, g_NativeWidth, g_NativeHeight);
 		Context.Draw(3);
 	}
-	/*
-	else if (UpsampleFilter == kBicubic)
+	
+	/*else if (UpsampleFilter == kBicubic)
 	{
 		Context.TransitionResource(g_HorizontalBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		Context.SetRenderTarget(g_HorizontalBuffer.GetRTV());
@@ -578,7 +625,8 @@ void littleEngine::Graphics::PreparePresentLDR(void)
 		Context.SetConstants(1, g_DisplayWidth, g_NativeHeight, (float)BicubicUpsampleWeight);
 		Context.SetDynamicDescriptor(0, 0, g_HorizontalBuffer.GetSRV());
 		Context.Draw(3);
-	}
+	}*/
+	/*
 	else if (UpsampleFilter == kSharpening)
 	{
 		Context.SetPipelineState(SharpeningUpsamplePS);

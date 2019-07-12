@@ -19,8 +19,9 @@ namespace littleEngine
 			INLINE explicit Scalar(EIdentityTag) { m_vec = SplatOne(); }
 
 			INLINE operator XMVECTOR() const { return m_vec; }
-			INLINE operator float() const { return XMVectorGetX(m_vec); }
+			INLINE operator float() const { return XMVectorGetX(m_vec);  }
 
+			
 		private:
 			XMVECTOR m_vec;
 		};

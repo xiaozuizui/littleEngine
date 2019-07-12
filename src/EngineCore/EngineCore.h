@@ -35,6 +35,9 @@ namespace  littleEngine
 
 			// Optional UI (overlay) rendering pass.  This is LDR.  The buffer is already cleared.
 			virtual void RenderUI( GraphicsContext&) {};
+
+		protected:
+			
 		};
 
 		void RunApplication(IGameApp& app, const wchar_t* className);

@@ -8,8 +8,14 @@
 #include "EngineCore.h"
 #include "TestWindows.h"
 #include "Model/Model.h"
+#include "Graphics/BufferManager.h"
+#include "Graphics/DepthBuffer.h"
+#include "Graphics/ColorBuffer.h"
+#include "Graphics/CommandContext.h"
+#include "Graphics/TextureManager.h"
 
 #include <windows.h>
+#include "Math/Matrix4.h"
 
 void TestUility()
 {
@@ -28,9 +34,15 @@ void TestUility()
 void TestGame::Startup()
 {
 #ifdef _DEBUG
-	Model debugModel;
+	//Model debugModel;
+	littleEngine::Graphics::TextureManager::Initialize(L"Textures/");
 	ASSERT(debugModel.Load("sponza.h3d"), "Failed to load model");
 	ASSERT(debugModel.m_Header.meshCount > 0, "Model contains no meshes");
+	float modelRadius = Length(debugModel.m_Header.boundingBox.max - debugModel.m_Header.boundingBox.min) * .5f;
+	const Vector3 eye = (debugModel.m_Header.boundingBox.min + debugModel.m_Header.boundingBox.max) * .5f + Vector3(modelRadius * .5f, 0.0f, 0.0f);
+	camera.SetEyeAtUp(eye, Vector3(kZero), Vector3(kYUnitVector));
+	camera.SetZRange(1.0f, 10000.0f);
+	camera.Update();
 #endif
 
 }
@@ -47,7 +59,50 @@ void TestGame::Update(float deltaT)
 
 void TestGame::RenderScene()
 {
+
+#ifdef _DEBUG
+
+	GraphicsContext& context = GraphicsContext::Begin(L"debug model");
 	
+	context.SetUnlitPiplineState();
+	context.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	context.SetIndexBuffer(debugModel.m_IndexBuffer.IndexBufferView());
+	context.SetVertexBuffer(0, debugModel.m_VertexBuffer.VertexBufferView());
+	
+	context.TransitionResource(littleEngine::Graphics::g_SceneDepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE,true);
+	context.TransitionResource(littleEngine::Graphics::g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+	context.ClearColor(littleEngine::Graphics::g_SceneColorBuffer);
+	context.SetRenderTarget(littleEngine::Graphics::g_SceneColorBuffer.GetRTV(), littleEngine::Graphics::g_SceneDepthBuffer.GetDSV());
+	uint32_t VertexStride = debugModel.m_VertexStride;
+
+	struct VSConstants
+	{
+		Matrix4 modelToProjection;
+		
+	} vsConstants;
+	vsConstants.modelToProjection = Matrix4(Vector4(-0.0477909967f, -1.13123345f, 8.82812237e-05f, -0.882723927f),
+		Vector4(-4.04714058e-08f, 2.13240504f, 4.68909602e-05f, -0.468862712f),
+		Vector4(-1.35715389f, 0.0398352668f, -3.10874680e-06f, 0.0310843587f),
+		Vector4(0.0f, -144.797073f, 0.872433782f, 1276.53479f));
+	
+
+	context.SetDynamicConstantBufferView(0, sizeof(vsConstants), &vsConstants);
+
+	for (uint32_t meshIndex = 0; meshIndex < debugModel.m_Header.meshCount; meshIndex++)
+	{
+		const Model::Mesh& mesh = debugModel.m_pMesh[meshIndex];
+
+		uint32_t indexCount = mesh.indexCount;
+		uint32_t startIndex = mesh.indexDataByteOffset / sizeof(uint16_t);
+		uint32_t baseVertex = mesh.vertexDataByteOffset / VertexStride;
+
+		
+		context.SetDynamicDescriptors(2, 0, 6, debugModel.GetSRVs(mesh.materialIndex));
+		context.DrawIndexed(indexCount, startIndex, baseVertex);
+	}
+	context.Finish(true);
+#endif
+
 }
 
 

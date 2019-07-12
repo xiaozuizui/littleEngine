@@ -242,6 +242,9 @@ public:
 	void ExecuteIndirect(CommandSignature& CommandSig, GpuBuffer& ArgumentBuffer, uint64_t ArgumentStartOffset = 0,
 		uint32_t MaxCommands = 1, GpuBuffer * CommandCounterBuffer = nullptr, uint64_t CounterOffset = 0);
 
+
+	void SetUnlitPiplineState(void);
+
 private:
 };
 

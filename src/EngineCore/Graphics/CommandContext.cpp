@@ -10,6 +10,8 @@
 #include "DepthBuffer.h"
 #include "PipelineState.h"
 #include "GpuResource.h"
+#include "BufferManager.h"
+
 using namespace littleEngine::Graphics;
 
 
@@ -825,6 +827,27 @@ void GraphicsContext::DrawIndexedInstanced(UINT IndexCountPerInstance, UINT Inst
 	m_CommandList->DrawIndexedInstanced(IndexCountPerInstance, InstanceCount, StartIndexLocation, BaseVertexLocation, StartInstanceLocation);
 }
 
+void GraphicsContext::SetUnlitPiplineState()
+{
+	ID3D12PipelineState* PipelineState = UnlitPSO.GetPipelineStateObject();
+	if ( PipelineState != m_CurGraphicsPipelineState)
+	{
+		m_CommandList->SetPipelineState(PipelineState);
+		m_CurGraphicsPipelineState = PipelineState;
+	}
+
+	
+
+	if (littleEngine::Graphics::s_StandardRS.GetSignature() == m_CurGraphicsRootSignature)
+		return;
+
+	m_CommandList->SetGraphicsRootSignature(m_CurGraphicsRootSignature = s_StandardRS.GetSignature());
+
+	m_DynamicViewDescriptorHeap.ParseGraphicsRootSignature(s_StandardRS);
+	m_DynamicSamplerDescriptorHeap.ParseGraphicsRootSignature(s_StandardRS);
+
+	SetViewportAndScissor(0, 0, g_SceneColorBuffer.GetWidth(), g_SceneColorBuffer.GetHeight());
+}
 
 
 
@@ -884,3 +907,4 @@ void CommandContext::FlushResourceBarriers(void)
 		m_NumBarriersToFlush = 0;
 	}
 }
+

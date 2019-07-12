@@ -22,6 +22,7 @@ namespace littleEngine
 		void Shutdown(void);
 		void Present(void);
 
+
 		extern uint32_t g_DisplayWidth;
 		extern uint32_t g_DisplayHeight;
 
@@ -47,7 +48,9 @@ namespace littleEngine
 
 		extern DescriptorAllocator g_DescriptorAllocator[];
 		D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE Type, UINT Count = 1);
-		
+
+		extern GraphicsPSO UnlitPSO;
+		extern RootSignature s_StandardRS;
 
 		//extern RootSignature g_GenerateMipsRS;
 		//extern ComputePSO g_GenerateMipsLinearPSO[4];

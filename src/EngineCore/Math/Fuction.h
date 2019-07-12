@@ -1,6 +1,8 @@
 #pragma once
 #include "../Math/Common.h"
 #include "../Math/Vector.h"
+#include "Matrix4.h"
+
 //
 //INLINE float Sqrt(float s) { return Sqrt(Scalar(s)); }
 //INLINE float Recip(float s) { return Recip(Scalar(s)); }
@@ -59,6 +61,42 @@ namespace littleEngine
     INLINE TYPE Select( TYPE lhs, TYPE rhs, BoolVector mask ) { return TYPE(XMVectorSelect(lhs, rhs, mask)); }
 
 	CREATE_SIMD_FUNCTIONS(Vector3)
+	CREATE_SIMD_FUNCTIONS(Scalar)
+
+
+
+	INLINE Scalar Length(Vector3 v) { return Scalar(XMVector3Length(v)); }
+	INLINE Scalar LengthSquare(Vector3 v) { return Scalar(XMVector3LengthSq(v)); }
+	INLINE Scalar LengthRecip(Vector3 v) { return Scalar(XMVector3ReciprocalLength(v)); }
+	INLINE Scalar Dot(Vector3 v1, Vector3 v2) { return Scalar(XMVector3Dot(v1, v2)); }
+	INLINE Scalar Dot(Vector4 v1, Vector4 v2) { return Scalar(XMVector4Dot(v1, v2)); }
+	INLINE Vector3 Cross(Vector3 v1, Vector3 v2) { return Vector3(XMVector3Cross(v1, v2)); }
+	INLINE Vector3 Normalize(Vector3 v) { return Vector3(XMVector3Normalize(v)); }
+	INLINE Vector4 Normalize(Vector4 v) { return Vector4(XMVector4Normalize(v)); }
+	INLINE Quaternion Normalize(Quaternion q) { return Quaternion(XMQuaternionNormalize(q)); }
+	INLINE Matrix3 Transpose(const Matrix3& mat) { return Matrix3(XMMatrixTranspose(mat)); }
+
+	// inline Matrix3 Inverse( const Matrix3& mat ) { TBD }
+	// inline Transform Inverse( const Transform& mat ) { TBD }
+
+	// This specialized matrix invert assumes that the 3x3 matrix is orthogonal (and normalized).
+	INLINE AffineTransform OrthoInvert(const AffineTransform& xform)
+	{
+		Matrix3 basis = Transpose(xform.GetBasis());
+		return AffineTransform(basis, basis * -xform.GetTranslation());
+	}
+
+	INLINE OrthogonalTransform Invert(const OrthogonalTransform& xform) { return ~xform; }
+
+	INLINE Matrix4 Transpose(const Matrix4& mat) { return Matrix4(XMMatrixTranspose(mat)); }
+	INLINE Matrix4 Invert(const Matrix4& mat) { return Matrix4(XMMatrixInverse(nullptr, mat)); }
+
+	INLINE Matrix4 OrthoInvert(const Matrix4& xform)
+	{
+		Matrix3 basis = Transpose(xform.Get3x3());
+		Vector3 translate = basis * -Vector3(xform.GetW());
+		return Matrix4(basis, translate);
+	}
 	}
 
 

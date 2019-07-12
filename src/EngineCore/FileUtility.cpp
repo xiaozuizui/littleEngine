@@ -4,6 +4,7 @@
 #include <fstream>
 #include <zlib.h>
 
+using namespace std;
 using namespace littleEngine::Utility;
 
 namespace littleEngine

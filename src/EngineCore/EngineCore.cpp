@@ -44,6 +44,7 @@ namespace littleEngine
 
 		bool UpdateApplication(IGameApp& game) 
 		{
+			game.RenderScene();
 			//EngineProfiling::Update();
 
 			//float DeltaTime = Graphics::GetFrameTime();
@@ -88,9 +89,10 @@ namespace littleEngine
 			
 
 			GraphicsContext& text = GraphicsContext::Begin(L"Render UI");
-			text.ClearColor(Graphics::g_OverlayBuffer);
+			//text.ClearColor(Graphics::g_OverlayBuffer);
+			text.TransitionResource(Graphics::g_OverlayBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
 			text.SetRenderTarget(Graphics::g_OverlayBuffer.GetRTV());
-			text.SetViewportAndScissor(0, 0, Graphics::g_OverlayBuffer.GetWidth(), Graphics::g_OverlayBuffer.GetHeight());
+			text.SetViewportAndScissor(200, 200, Graphics::g_OverlayBuffer.GetWidth(), Graphics::g_OverlayBuffer.GetHeight());
 
 			TextContext Text(text);
 			Text.Begin();
@@ -368,6 +370,11 @@ namespace littleEngine
 			//Graphics::Shutdown();
 		}
 
+
+		void RunApplicationWithHWND(IGameApp& app)
+		{
+			
+		}
 		//--------------------------------------------------------------------------------------
 		// Called every time the application receives a message
 		//--------------------------------------------------------------------------------------

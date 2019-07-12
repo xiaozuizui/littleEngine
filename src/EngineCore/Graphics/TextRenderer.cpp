@@ -17,9 +17,9 @@
 #include "CommandContext.h"
 #include "PipelineState.h"
 
-#include "CompiledShaders/TextVS.h"
-#include "CompiledShaders/TextAntialiasPS.h"
-#include "CompiledShaders/TextShadowPS.h"
+#include "TextVS.h"
+#include "TextAntialiasPS.h"
+#include "TextShadowPS.h"
 
 using namespace std;
 using namespace littleEngine::Graphics;

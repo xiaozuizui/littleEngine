@@ -143,6 +143,21 @@
     <ClInclude Include="..\src\EngineCore\Math\VectorMath.h">
       <Filter>source\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\EngineCore\Math\Matrix4.h">
+      <Filter>source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EngineCore\Math\Transform.h">
+      <Filter>source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EngineCore\Math\Quaternion.h">
+      <Filter>source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EngineCore\Math\Matrix3.h">
+      <Filter>source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EngineCore\Camrea.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\EngineCore\Graphics\PipelineState.cpp">
@@ -225,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="..\src\EngineCore\Model\ModelH3D.cpp">
       <Filter>source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EngineCore\Camrea.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

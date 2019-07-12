@@ -1,0 +1,37 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(438,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  ModelViewer.cpp
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(28,26): warning C4251:  'WaveOBJ::attrib': struct 'tinyobj::attrib_t' needs to have dll-interface to be used by clients of class 'WaveOBJ'
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(365): message :  see declaration of 'tinyobj::attrib_t'
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(29,38): warning C4251:  'WaveOBJ::shapes': class 'std::vector<tinyobj::shape_t,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'WaveOBJ'
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(29,38): warning C4251:         with
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(29,38): warning C4251:         [
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(29,38): warning C4251:             _Ty=tinyobj::shape_t
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(29,38): warning C4251:         ]
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(524): message :  see declaration of 'std::vector<tinyobj::shape_t,std::allocator<_Ty>>'
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(524): message :         with
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(524): message :         [
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(524): message :             _Ty=tinyobj::shape_t
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(524): message :         ]
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(30,44): warning C4251:  'WaveOBJ::materials': class 'std::vector<tinyobj::material_t,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'WaveOBJ'
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(30,44): warning C4251:         with
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(30,44): warning C4251:         [
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(30,44): warning C4251:             _Ty=tinyobj::material_t
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(30,44): warning C4251:         ]
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(429): message :  see declaration of 'std::vector<tinyobj::material_t,std::allocator<_Ty>>'
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(429): message :         with
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(429): message :         [
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(429): message :             _Ty=tinyobj::material_t
+E:\code\littleEngine\littleEngine\src\OBJLoader\tiny_obj_loader.h(429): message :         ]
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(36,83): warning C4190:  'LoadWaveOBJ' has C-linkage specified, but returns UDT 'WaveOBJ' which is incompatible with C
+E:\code\littleEngine\littleEngine\src\OBJLoader\OBJLoader.h(16): message :  see declaration of 'WaveOBJ'
+     Creating library E:\code\littleEngine\littleEngine\x64\Debug\lib\RenderDLL\RenderDLL.lib and object E:\code\littleEngine\littleEngine\x64\Debug\lib\RenderDLL\RenderDLL.exp
+MSVCRTD.lib(initializers.obj) : warning LNK4098: defaultlib 'libcmtd.lib' conflicts with use of other libs; use /NODEFAULTLIB:library
+zlibstatic.lib(adler32.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(adler32.obj)' or at '??????'; linking object as if no debug info
+zlibstatic.lib(crc32.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(crc32.obj)' or at '??????'; linking object as if no debug info
+zlibstatic.lib(inflate.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(inflate.obj)' or at '??????'; linking object as if no debug info
+zlibstatic.lib(inftrees.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(inftrees.obj)' or at '??????'; linking object as if no debug info
+zlibstatic.lib(inffast.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(inffast.obj)' or at '??????'; linking object as if no debug info
+zlibstatic.lib(zutil.obj) : warning LNK4099: PDB '??????' was not found with 'zlibstatic.lib(zutil.obj)' or at '??????'; linking object as if no debug info
+  RenderDLL.vcxproj -> E:\code\littleEngine\littleEngine\x64\Debug\lib\RenderDLL\RenderDLL.dll
+  已复制         1 个文件。
+  已复制         1 个文件。
