@@ -8,4 +8,5 @@
 /DebugCmd/x64/Debug
 /EngineCore/Debug
 /EngineCore/x64/Debug
-/WorkDir
+
+/.vs
