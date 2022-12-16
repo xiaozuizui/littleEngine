@@ -1,2 +1,0 @@
-#define OBJLOADER_API __declspec(dllexport)
-#define OBJLOADER_API __declspec(dllimport)
